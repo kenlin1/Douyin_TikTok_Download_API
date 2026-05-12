@@ -15,13 +15,15 @@ logger = logging.getLogger(__name__)
 # 获取单个作品数据
 @router.get("/fetch_one_video", response_model=ResponseModel, summary="获取单个作品数据/Get single video data")
 async def fetch_one_video(request: Request,
-                          aweme_id: str = Query(examples=["7372484719365098803"], description="作品id/Video id")):
+                          aweme_id: str = Query(examples=["7372484719365098803"], description="作品id/Video id"),
+                          cookie: str = Query(default=None, description="可选Cookie，不传则使用配置文件中的Cookie/Optional Cookie, uses config.yaml if not provided")):
     """
     # [中文]
     ### 用途:
     - 获取单个作品数据
     ### 参数:
     - aweme_id: 作品id
+    - cookie: 可选，用户自定义Cookie，不传则使用配置文件中的Cookie
     ### 返回:
     - 作品数据
 
@@ -30,6 +32,7 @@ async def fetch_one_video(request: Request,
     - Get single video data
     ### Parameters:
     - aweme_id: Video id
+    - cookie: Optional, custom Cookie, uses config.yaml if not provided
     ### Return:
     - Video data
 
@@ -37,7 +40,7 @@ async def fetch_one_video(request: Request,
     aweme_id = "7372484719365098803"
     """
     try:
-        data = await DouyinWebCrawler.fetch_one_video(aweme_id)
+        data = await DouyinWebCrawler.fetch_one_video(aweme_id, cookie=cookie)
         return ResponseModel(code=200,
                              router=request.url.path,
                              data=data)
@@ -59,7 +62,8 @@ async def fetch_user_post_videos(request: Request,
                                      examples=["MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"],
                                      description="用户sec_user_id/User sec_user_id"),
                                  max_cursor: int = Query(default=0, description="最大游标/Maximum cursor"),
-                                 count: int = Query(default=20, description="每页数量/Number per page")):
+                                 count: int = Query(default=20, description="每页数量/Number per page"),
+                                 cookie: str = Query(default=None, description="可选Cookie，不传则使用配置文件中的Cookie/Optional Cookie, uses config.yaml if not provided")):
     """
     # [中文]
     ### 用途:
@@ -68,6 +72,7 @@ async def fetch_user_post_videos(request: Request,
     - sec_user_id: 用户sec_user_id
     - max_cursor: 最大游标
     - count: 最大数量
+    - cookie: 可选，用户自定义Cookie，不传则使用配置文件中的Cookie
     ### 返回:
     - 用户作品数据
 
@@ -78,6 +83,7 @@ async def fetch_user_post_videos(request: Request,
     - sec_user_id: User sec_user_id
     - max_cursor: Maximum cursor
     - count: Maximum count number
+    - cookie: Optional, custom Cookie, uses config.yaml if not provided
     ### Return:
     - User video data
 
@@ -87,7 +93,7 @@ async def fetch_user_post_videos(request: Request,
     counts = 20
     """
     try:
-        data = await DouyinWebCrawler.fetch_user_post_videos(sec_user_id, max_cursor, count)
+        data = await DouyinWebCrawler.fetch_user_post_videos(sec_user_id, max_cursor, count, cookie=cookie)
         return ResponseModel(code=200,
                              router=request.url.path,
                              data=data)
@@ -441,13 +447,15 @@ async def fetch_live_room_product_result(request: Request,
 async def handler_user_profile(request: Request,
                                sec_user_id: str = Query(
                                    examples=["MS4wLjABAAAAW9FWcqS7RdQAWPd2AA5fL_ilmqsIFUCQ_Iym6Yh9_cUa6ZRqVLjVQSUjlHrfXY1Y"],
-                                   description="用户sec_user_id/User sec_user_id")):
+                                   description="用户sec_user_id/User sec_user_id"),
+                               cookie: str = Query(default=None, description="可选Cookie，不传则使用配置文件中的Cookie/Optional Cookie, uses config.yaml if not provided")):
     """
     # [中文]
     ### 用途:
     - 获取指定用户的信息
     ### 参数:
     - sec_user_id: 用户sec_user_id
+    - cookie: 可选，用户自定义Cookie，不传则使用配置文件中的Cookie
     ### 返回:
     - 用户信息
 
@@ -456,6 +464,7 @@ async def handler_user_profile(request: Request,
     - Get information of specified user
     ### Parameters:
     - sec_user_id: User sec_user_id
+    - cookie: Optional, custom Cookie, uses config.yaml if not provided
     ### Return:
     - User information
 
@@ -463,7 +472,7 @@ async def handler_user_profile(request: Request,
     sec_user_id = "MS4wLjABAAAAW9FWcqS7RdQAWPd2AA5fL_ilmqsIFUCQ_Iym6Yh9_cUa6ZRqVLjVQSUjlHrfXY1Y"
     """
     try:
-        data = await DouyinWebCrawler.handler_user_profile(sec_user_id)
+        data = await DouyinWebCrawler.handler_user_profile(sec_user_id, cookie=cookie)
         return ResponseModel(code=200,
                              router=request.url.path,
                              data=data)

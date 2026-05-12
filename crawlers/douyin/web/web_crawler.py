@@ -85,10 +85,17 @@ class DouyinWebCrawler:
 
     "-------------------------------------------------------handler接口列表-------------------------------------------------------"
 
-    # 获取单个作品数据
-    async def fetch_one_video(self, aweme_id: str):
-        # 获取抖音的实时Cookie
+    async def get_douyin_headers_with_cookie(self, cookie: str = None):
+        """获取请求头，如果传入 cookie 则覆盖配置文件中的 cookie"""
         kwargs = await self.get_douyin_headers()
+        if cookie:
+            kwargs["headers"]["Cookie"] = cookie
+        return kwargs
+
+    # 获取单个作品数据
+    async def fetch_one_video(self, aweme_id: str, cookie: str = None):
+        # 获取抖音的实时Cookie
+        kwargs = await self.get_douyin_headers_with_cookie(cookie)
         # 创建一个基础爬虫
         base_crawler = BaseCrawler(proxies=kwargs["proxies"], crawler_headers=kwargs["headers"])
         async with base_crawler as crawler:
@@ -110,8 +117,8 @@ class DouyinWebCrawler:
         return response
 
     # 获取用户发布作品数据
-    async def fetch_user_post_videos(self, sec_user_id: str, max_cursor: int, count: int):
-        kwargs = await self.get_douyin_headers()
+    async def fetch_user_post_videos(self, sec_user_id: str, max_cursor: int, count: int, cookie: str = None):
+        kwargs = await self.get_douyin_headers_with_cookie(cookie)
         base_crawler = BaseCrawler(proxies=kwargs["proxies"], crawler_headers=kwargs["headers"])
         async with base_crawler as crawler:
             params = UserPost(sec_user_id=sec_user_id, max_cursor=max_cursor, count=count)
@@ -210,8 +217,8 @@ class DouyinWebCrawler:
         return response
 
     # 获取指定用户的信息
-    async def handler_user_profile(self, sec_user_id: str):
-        kwargs = await self.get_douyin_headers()
+    async def handler_user_profile(self, sec_user_id: str, cookie: str = None):
+        kwargs = await self.get_douyin_headers_with_cookie(cookie)
         base_crawler = BaseCrawler(proxies=kwargs["proxies"], crawler_headers=kwargs["headers"])
         async with base_crawler as crawler:
             params = UserProfile(sec_user_id=sec_user_id)

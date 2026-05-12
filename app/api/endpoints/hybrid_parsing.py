@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/video_data", response_model=ResponseModel, tags=["Hybrid-API"],
             summary="混合解析单一视频接口/Hybrid parsing single video endpoint")
 async def hybrid_parsing_single_video(request: Request,
-                                      url: str = Query(example="https://v.douyin.com/L4FJNR3/"),
+                                      url: str = Query(examples=["https://v.douyin.com/L4FJNR3/"]),
                                       minimal: bool = Query(default=False)):
     """
     # [中文]
@@ -57,8 +57,8 @@ async def hybrid_parsing_single_video(request: Request,
              response_model=ResponseModel,
              summary="更新Cookie/Update Cookie")
 async def update_cookie_api(request: Request,
-                           service: str = Body(example="douyin", description="服务名称/Service name"),
-                           cookie: str = Body(example="YOUR_NEW_COOKIE", description="新的Cookie值/New Cookie value")):
+                           service: str = Body(examples=["douyin"], description="服务名称/Service name"),
+                           cookie: str = Body(examples=["YOUR_NEW_COOKIE"], description="新的Cookie值/New Cookie value")):
     """
     # [中文]
     ### 用途:

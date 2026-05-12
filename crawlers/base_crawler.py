@@ -95,7 +95,7 @@ class BaseCrawler:
         # 异步客户端 / Asynchronous client
         self.aclient = httpx.AsyncClient(
             headers=self.crawler_headers,
-            proxies=self.proxies,
+            proxy=self.proxies.get("https://") or self.proxies.get("http://") if self.proxies else None,
             timeout=self.timeout,
             limits=self.limits,
             transport=self.atransport,

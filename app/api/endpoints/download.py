@@ -111,7 +111,7 @@ async def merge_bilibili_video_audio(video_url: str, audio_url: str, request: Re
 @router.get("/download", summary="在线下载抖音|TikTok|Bilibili视频/图片/Online download Douyin|TikTok|Bilibili video/image")
 async def download_file_hybrid(request: Request,
                                url: str = Query(
-                                   example="https://www.douyin.com/video/7372484719365098803",
+                                   examples=["https://www.douyin.com/video/7372484719365098803"],
                                    description="视频或图片的URL地址，支持抖音|TikTok|Bilibili的分享链接，例如：https://v.douyin.com/e4J8Q7A/ 或 https://www.bilibili.com/video/BV1xxxxxxxxx"),
                                prefix: bool = True,
                                with_watermark: bool = False):

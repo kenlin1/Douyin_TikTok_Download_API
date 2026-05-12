@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # Copyright (C) 2021 Evil0ctal
 #
 # This file is part of the Douyin_TikTok_Download_API project.
@@ -107,7 +107,7 @@ class TokenManager:
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
+        with httpx.Client(transport=transport) as client:
             try:
                 response = client.post(
                     cls.token_conf["url"], content=payload, headers=headers
@@ -340,9 +340,7 @@ class SecUserIdFetcher:
 
         try:
             transport = httpx.AsyncHTTPTransport(retries=5)
-            async with httpx.AsyncClient(
-                    transport=transport, proxies=TokenManager.proxies, timeout=10
-            ) as client:
+            async with httpx.AsyncClient(transport=transport, timeout=10) as client:
                 response = await client.get(url, follow_redirects=True)
                 # 444一般为Nginx拦截，不返回状态 (444 is generally intercepted by Nginx and does not return status)
                 if response.status_code in {200, 444}:
@@ -528,9 +526,7 @@ class WebCastIdFetcher:
         try:
             # 重定向到完整链接
             transport = httpx.AsyncHTTPTransport(retries=5)
-            async with httpx.AsyncClient(
-                    transport=transport, proxies=TokenManager.proxies, timeout=10
-            ) as client:
+            async with httpx.AsyncClient(transport=transport, timeout=10) as client:
                 response = await client.get(url, follow_redirects=True)
                 response.raise_for_status()
                 url = str(response.url)

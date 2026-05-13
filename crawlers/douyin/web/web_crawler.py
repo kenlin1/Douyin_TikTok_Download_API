@@ -47,7 +47,7 @@ from crawlers.douyin.web.models import (
     BaseRequestModel, LiveRoomRanking, PostComments,
     PostCommentsReply, PostDetail,
     UserProfile, UserCollection, UserLike, UserLive,
-    UserLive2, UserMix, UserPost
+    UserLive2, UserMix, UserPost, UserFollowing
 )
 # 抖音应用的工具类
 from crawlers.douyin.web.utils import (AwemeIdFetcher,  # Aweme ID获取
@@ -249,6 +249,19 @@ class DouyinWebCrawler:
             endpoint = BogusManager.xb_model_2_endpoint(
                 DouyinAPIEndpoints.POST_COMMENT_REPLY, params.dict(), kwargs["headers"]["User-Agent"]
             )
+            response = await crawler.fetch_get_json(endpoint)
+        return response
+
+    # 获取用户关注列表数据（需要用户提供自己的Cookie）
+    async def fetch_user_following(self, sec_user_id: str, cookie: str, offset: int = 0, count: int = 20, user_id: str = ""):
+        kwargs = await self.get_douyin_headers_with_cookie(cookie)
+        base_crawler = BaseCrawler(proxies=kwargs["proxies"], crawler_headers=kwargs["headers"])
+        async with base_crawler as crawler:
+            params = UserFollowing(sec_user_id=sec_user_id, user_id=user_id, offset=offset, count=count)
+            params_dict = params.dict()
+            params_dict["msToken"] = ''
+            a_bogus = BogusManager.ab_model_2_endpoint(params_dict, kwargs["headers"]["User-Agent"])
+            endpoint = f"{DouyinAPIEndpoints.USER_FOLLOWING}?{urlencode(params_dict)}&a_bogus={a_bogus}"
             response = await crawler.fetch_get_json(endpoint)
         return response
 

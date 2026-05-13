@@ -1103,3 +1103,43 @@ async def get_all_webcast_id(request: Request,
                                     params=dict(request.query_params),
                                     )
         raise HTTPException(status_code=status_code, detail=detail.dict())
+
+
+# 获取用户关注列表（需要用户提供自己的Cookie）
+@router.get("/fetch_user_following",
+            response_model=ResponseModel,
+            summary="获取用户关注列表/Get user following list")
+async def fetch_user_following(request: Request,
+                               cookie: str = Query(examples=["YOUR_COOKIE"],
+                                                   description="用户网页版抖音Cookie/Your web version of Douyin Cookie"),
+                               sec_user_id: str = Query(default="", examples=["MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"],
+                                                        description="用户sec_user_id/User sec_user_id"),
+                               user_id: str = Query(default="", description="用户数字ID（uid_tt），与sec_user_id二选一/User numeric ID"),
+                               offset: int = Query(default=0, description="偏移量/Offset"),
+                               count: int = Query(default=20, description="每页数量/Number per page")):
+    """
+    # [中文]
+    ### 用途:
+    - 获取用户关注列表（需要提供自己账号的Cookie）
+    ### 参数:
+    - cookie: 用户网页版抖音Cookie
+    - sec_user_id: 用户sec_user_id（与user_id二选一）
+    - user_id: 用户数字ID，即Cookie中的uid_tt（与sec_user_id二选一）
+    - offset: 偏移量（翻页游标）
+    - count: 每页数量
+    ### 返回:
+    - 用户关注列表
+    """
+    try:
+        data = await DouyinWebCrawler.fetch_user_following(sec_user_id, cookie, offset, count, user_id=user_id)
+        return ResponseModel(code=200,
+                             router=request.url.path,
+                             data=data)
+    except Exception as e:
+        logger.error("API error: %s", e, exc_info=True)
+        status_code = 400
+        detail = ErrorResponseModel(code=status_code,
+                                    router=request.url.path,
+                                    params=dict(request.query_params),
+                                    )
+        raise HTTPException(status_code=status_code, detail=detail.dict())

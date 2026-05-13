@@ -1,26 +1,36 @@
-# 使用官方 Python 3.11 的轻量版镜像
+# ── 底层 API Dockerfile ─────────────────────────────────────────────────────
+# Douyin_TikTok_Download_API
+# 使用阿里云镜像加速
+# ────────────────────────────────────────────────────────────────────────────
+
 FROM python:3.11-slim
 
-LABEL maintainer="Evil0ctal"
-
-# 设置非交互模式，避免 Docker 构建时的交互问题
-ENV DEBIAN_FRONTEND=noninteractive
-
-# 设置工作目录
 WORKDIR /app
 
-# 复制应用代码到容器
-COPY . /app
+# 配置 Debian 阿里云镜像源
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# 使用 Aliyun 镜像源加速 pip
-RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ -U pip \
-    && pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+# 配置 pip 阿里云镜像
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
+    pip config set install.trusted-host mirrors.aliyun.com
 
-# 安装依赖
+# 复制依赖文件
+COPY requirements.txt .
+
+# 安装 Python 依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 确保启动脚本可执行
-RUN chmod +x start.sh
+# 复制应用代码
+COPY . .
 
-# 设置容器启动命令
-CMD ["./start.sh"]
+# 创建下载目录
+RUN mkdir -p /app/download
+
+# 暴露端口
+EXPOSE 8080
+
+# 启动命令
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

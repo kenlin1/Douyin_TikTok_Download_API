@@ -7,10 +7,8 @@ FROM docker.fzyun.io/python:3.11-slim
 
 WORKDIR /app
 
-# 配置 Debian 阿里云镜像源
-RUN rm -f /etc/apt/sources.list.d/debian.sources && \
-    echo "Types: deb\nURIs: http://mirrors.aliyun.com/debian\nSuites: bookworm bookworm-updates bookworm-security\nComponents: main contrib non-free non-free-firmware\nSigned-By: /usr/share/keyrings/debian-archive-keyring.gpg" > /etc/apt/sources.list.d/debian.sources && \
-    apt-get update && apt-get install -y --no-install-recommends \
+# 安装系统依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 

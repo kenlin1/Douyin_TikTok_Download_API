@@ -3,7 +3,7 @@
 # 使用阿里云镜像加速
 # ────────────────────────────────────────────────────────────────────────────
 
-FROM python:3.11-slim
+FROM docker.fzyun.io/python:3.11-slim
 
 WORKDIR /app
 
